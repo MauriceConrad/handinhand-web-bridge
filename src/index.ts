@@ -97,6 +97,37 @@ router.get('/supporters', async ({ req, env }) => {
   });
 });
 
+router.get('/ppDownloadsCount', async ({ req, env }) => {
+  const count = await env.HAND_IN_HAND_STORAGE.get('ppDownloadsCount', 'text');
+  const body = JSON.stringify({
+    ok: true,
+    count: Number(count) || 0,
+  });
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': body.length.toString(),
+    },
+  });
+});
+router.put('/ppDownloadsCount', async ({ req, env }) => {
+  const count = await env.HAND_IN_HAND_STORAGE.get('ppDownloadsCount', 'text');
+  const newCount = Number(count) + 1;
+  await env.HAND_IN_HAND_STORAGE.put('ppDownloadsCount', newCount.toString());
+  const body = JSON.stringify({
+    ok: true,
+    count: newCount,
+  });
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': body.length.toString(),
+    },
+  });
+});
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     return router.handle(request, env, ctx);

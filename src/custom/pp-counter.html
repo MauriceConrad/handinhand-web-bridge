@@ -1,0 +1,15 @@
+<div id="pp-downloads-counter">
+  <span class="label"></span>
+</div>
+
+<script>
+  const bridgeHost = 'https://handinhand-bridge.bluepic.workers.dev';
+  const labelEl = document.querySelector('#pp-downloads-counter .label');
+
+  window.addEventListener('message', (messageEvent) => {
+    const { data } = messageEvent;
+    console.log(data);
+  });
+
+  labelEl.innerHTML = 'foobar';
+</script>
