@@ -76,6 +76,8 @@
 
   <script>
     {
+      const LIMIT = 3;
+
       const { createApp, ref } = Vue;
 
       function getSupporters(limit) {
@@ -86,7 +88,7 @@
       createApp({
         setup() {
           const supporters = ref();
-          getSupporters(2).then((res) => {
+          getSupporters(LIMIT).then((res) => {
             supporters.value = res.supporters;
           });
 
