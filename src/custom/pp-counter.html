@@ -1,15 +1,32 @@
-<div id="pp-downloads-counter">
-  <span class="label"></span>
-</div>
+<span id="pp-downloads-counter">?</span>
 
 <script>
   const bridgeHost = 'https://handinhand-bridge.bluepic.workers.dev';
-  const labelEl = document.querySelector('#pp-downloads-counter .label');
+  const labelEl = document.querySelector('#pp-downloads-counter');
 
-  window.addEventListener('message', (messageEvent) => {
+  let downloadsCounter = 0;
+
+  function updateView() {
+    labelEl.innerHTML = downloadsCounter;
+  }
+
+  async function fetchDownloadsCount() {
+    const url = `${bridgeHost}/ppDownloadsCount`;
+    const result = await fetch(url).then((res) => res.json());
+    downloadsCounter = result.count;
+    updateView();
+  }
+
+  window.addEventListener('message', async (messageEvent) => {
     const { data } = messageEvent;
-    console.log(data);
+    const url = `${bridgeHost}/ppDownloadsCount`;
+    const response = await fetch(url, {
+      method: 'PUT',
+    });
+    const result = await response.json();
+    downloadsCounter = result.count;
+    updateView();
   });
 
-  labelEl.innerHTML = 'foobar';
+  fetchDownloadsCount();
 </script>
