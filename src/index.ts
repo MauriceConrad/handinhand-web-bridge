@@ -1,0 +1,104 @@
+import { Router } from '@tsndr/cloudflare-worker-router';
+import google from 'googleapis';
+
+export interface Env {
+  HAND_IN_HAND_STORAGE: KVNamespace;
+  GOOGLE_SHEET_ID: string;
+  GOOGLE_API_KEY: string;
+}
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,HEAD,POST,OPTIONS',
+  'Access-Control-Max-Age': '86400',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+//const baseUrlStudioResources = 'http://localhost:8082/api';
+
+// Request Extension
+export type ExtReq = {
+  userId?: number;
+};
+
+// Context Extension
+export type ExtCtx = {
+  //sentry?: Toucan
+};
+
+export type SessionContext = {
+  openAIEphermalUserId: string;
+  openAIConversationId: string;
+  openAIGPTId: string;
+  realIP: string;
+  datadogTraceId: string;
+  dataDogParentId: string;
+  userAgent: string;
+  datadogSampingPriority: string;
+  forwardedProto: string;
+  traceparent: string;
+  tracestate: string;
+};
+
+const router = new Router<Env, ExtCtx, ExtReq>();
+
+// Enabling build in CORS support
+router.cors();
+
+router.get('/health', async ({ req }) => {
+  const body = JSON.stringify({
+    ok: true,
+  });
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': body.length.toString(),
+    },
+  });
+});
+
+type GSheetResponse = {
+  range: string;
+  majorDimension: string;
+  values: string[][];
+};
+
+router.get('/supporters', async ({ req, env }) => {
+  const limit = req.query.limit ? Number(req.query.limit) : 1000;
+  if (typeof limit !== 'number' || isNaN(limit)) {
+    return new Response(
+      JSON.stringify({
+        error: 'limit must be a number',
+      }),
+      {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  }
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${env.GOOGLE_SHEET_ID}/values/A1:A${limit}?key=${env.GOOGLE_API_KEY}`);
+  const result = (await response.json()) as GSheetResponse;
+
+  const body = JSON.stringify({
+    ok: true,
+    supporters: result.values.map((row) => {
+      return row[0];
+    }),
+  });
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': body.length.toString(),
+    },
+  });
+});
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    return router.handle(request, env, ctx);
+  },
+};

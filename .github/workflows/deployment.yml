@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v3
+      # Use Node and NPM
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Inject google api key from env
+        run: sed -i -e "s|-GOOGLE_API_KEY-|${{ secrets.GOOGLE_API_KEY }}|g" wrangler.toml
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

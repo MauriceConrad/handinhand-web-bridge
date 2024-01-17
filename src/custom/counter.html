@@ -1,0 +1,11 @@
+<div class="supporters-counter">
+  <span class="label"> ... </span>
+  <script>
+    (async () => {
+      const bridgeHost = 'http://localhost:56666';
+      const supportersResult = await fetch(`${bridgeHost}/supporters`).then((res) => res.json());
+      const labelEl = document.querySelector('.supporters-counter .label');
+      labelEl.innerText = `${supportersResult.supporters.length}`;
+    })();
+  </script>
+</div>

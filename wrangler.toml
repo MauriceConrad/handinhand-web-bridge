@@ -1,0 +1,15 @@
+name = "handinhand-bridge"
+main = "src/index.ts"
+compatibility_date = "2023-12-13"
+
+kv_namespaces = [
+  { binding = "HAND_IN_HAND_STORAGE", id = "baaf201106e04188b29526a74b8af7b7" }
+]
+
+r2_buckets = [
+  
+]
+
+[vars]
+GOOGLE_API_KEY = "-GOOGLE_API_KEY-"
+GOOGLE_SHEET_ID = "1Y73h0nnmEY1h51OZ2POGiOXXoViGdVpJkgTr39HCQhw"
