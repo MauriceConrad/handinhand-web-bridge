@@ -5,8 +5,11 @@
 <div id="supports-list">
   <div class="wrapper">
     <ul v-if="supporters">
-      <li v-for="supporter, index in supporters" :key="index">
+      <li v-for="supporter, index in supporters.slice(0, showCount)" :key="index">
         <span>{{ supporter }}</span>
+      </li>
+      <li v-if="showCount < Infinity">
+        <button @click="showAll">Alle anzeigen</button>
       </li>
     </ul>
     <div v-else class="spinner-wrapper">
@@ -21,6 +24,7 @@
 
   <style scoped>
     #supports-list {
+      font-size: 1.1em;
     }
     #supports-list .wrapper > ul {
       list-style: none;
@@ -30,6 +34,9 @@
     #supports-list .wrapper > ul > li {
       padding: 0;
       margin: 0;
+    }
+    #supports-list .wrapper > ul > li + li {
+      margin-top: 5px;
     }
     #supports-list .spinner-wrapper {
       display: grid;
@@ -76,7 +83,7 @@
 
   <script>
     {
-      const LIMIT = 3;
+      const LIMIT = 30000;
 
       const { createApp, ref } = Vue;
 
@@ -88,12 +95,19 @@
       createApp({
         setup() {
           const supporters = ref();
+          const showCount = ref(30);
           getSupporters(LIMIT).then((res) => {
             supporters.value = res.supporters;
           });
 
+          const showAll = () => {
+            showCount.value = Infinity;
+          };
+
           return {
+            showCount,
             supporters,
+            showAll,
           };
         },
       }).mount('#supports-list > .wrapper');

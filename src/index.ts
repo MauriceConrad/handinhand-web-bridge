@@ -64,6 +64,17 @@ type GSheetResponse = {
   values: string[][];
 };
 
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array]; // Eine Kopie des ursprünglichen Arrays erstellen
+  for (let i = newArray.length - 1; i > 0; i--) {
+    // Zufälligen Index zwischen 0 und i (einschließlich) auswählen
+    const j = Math.floor(Math.random() * (i + 1));
+    // Die Elemente an den Indizes i und j tauschen
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 router.get('/supporters', async ({ req, env }) => {
   const limit = req.query.limit ? Number(req.query.limit) : 1000;
   if (typeof limit !== 'number' || isNaN(limit)) {
@@ -84,9 +95,11 @@ router.get('/supporters', async ({ req, env }) => {
 
   const body = JSON.stringify({
     ok: true,
-    supporters: result.values.map((row) => {
-      return row[0];
-    }),
+    supporters: shuffleArray(
+      result.values.map((row) => {
+        return row[0];
+      })
+    ),
   });
   return new Response(body, {
     status: 200,
