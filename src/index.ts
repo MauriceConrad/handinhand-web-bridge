@@ -95,11 +95,9 @@ router.get('/supporters', async ({ req, env }) => {
 
   const body = JSON.stringify({
     ok: true,
-    supporters: shuffleArray(
-      result.values.map((row) => {
-        return row[0];
-      })
-    ),
+    supporters: result.values.map((row) => {
+      return row[0];
+    }),
   });
   return new Response(body, {
     status: 200,
