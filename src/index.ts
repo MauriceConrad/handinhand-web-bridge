@@ -76,23 +76,11 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 router.get('/supporters', async ({ req, env }) => {
-  const limit = req.query.limit ? Number(req.query.limit) : 1000;
   const sheetId = req.query.sheet || env.GOOGLE_SHEET_ID;
-  if (typeof limit !== 'number' || isNaN(limit)) {
-    return new Response(
-      JSON.stringify({
-        error: 'limit must be a number',
-      }),
-      {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-  }
-  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:A${limit}?key=${env.GOOGLE_API_KEY}`);
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:A?key=${env.GOOGLE_API_KEY}`);
   const result = (await response.json()) as GSheetResponse;
+
+  console.log(result.values.length);
 
   const body = JSON.stringify({
     ok: true,
