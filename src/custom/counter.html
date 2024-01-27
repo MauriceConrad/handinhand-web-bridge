@@ -2,8 +2,11 @@
   <span class="label"> ... </span>
   <script>
     (async () => {
+      const LIMIT = 30000;
+      const GOOGLE_SHEET_ID = 'AIzaSyAe75K1YYJVmrP6DWthR3DJsthR6xIBNR8';
+
       const bridgeHost = 'https://handinhand-bridge.bluepic.workers.dev';
-      const supportersResult = await fetch(`${bridgeHost}/supporters`).then((res) => res.json());
+      const supportersResult = await fetch(`${bridgeHost}/supporters?limit=${LIMIT}&sheet=${GOOGLE_SHEET_ID}`).then((res) => res.json());
       const labelEl = document.querySelector('.supporters-counter .label');
       labelEl.innerText = `${supportersResult.supporters.length}`;
     })();

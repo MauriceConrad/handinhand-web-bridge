@@ -84,19 +84,20 @@
   <script>
     {
       const LIMIT = 30000;
+      const GOOGLE_SHEET_ID = 'AIzaSyAe75K1YYJVmrP6DWthR3DJsthR6xIBNR8';
 
       const { createApp, ref } = Vue;
 
-      function getSupporters(limit) {
+      function getSupporters(limit, sheetId) {
         const bridgeHost = 'https://handinhand-bridge.bluepic.workers.dev';
-        return fetch(`${bridgeHost}/supporters?limit=${limit}`).then((res) => res.json());
+        return fetch(`${bridgeHost}/supporters?limit=${limit}&sheet=${sheetId}`).then((res) => res.json());
       }
 
       createApp({
         setup() {
           const supporters = ref();
           const showCount = ref(30);
-          getSupporters(LIMIT).then((res) => {
+          getSupporters(LIMIT, GOOGLE_SHEET_ID).then((res) => {
             supporters.value = res.supporters;
           });
 
